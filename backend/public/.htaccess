@@ -1,0 +1,23 @@
+# ---------------------------------------------------------------------------
+# Front controller: encaminha todas as requisicoes para index.php,
+# exceto arquivos e diretorios reais (assets, uploads, etc.).
+# ---------------------------------------------------------------------------
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Preserva o cabecalho Authorization (alguns ambientes o removem).
+    RewriteCond %{HTTP:Authorization} .
+    RewriteRule ^ - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^ index.php [QSA,L]
+</IfModule>
+
+# Nao listar o conteudo de diretorios.
+Options -Indexes
+
+# Bloqueia o acesso direto a arquivos sensiveis, caso fiquem sob o webroot.
+<FilesMatch "(^\.env|\.env\..*|composer\.(json|lock)|.*\.sql|.*\.log)$">
+    Require all denied
+</FilesMatch>

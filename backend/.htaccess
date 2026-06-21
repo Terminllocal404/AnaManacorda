@@ -1,0 +1,21 @@
+# ---------------------------------------------------------------------------
+# Fallback: caso o DocumentRoot aponte para a raiz do projeto (e nao para
+# /public, como recomendado), encaminha as requisicoes para dentro de public/.
+#
+# Em producao, o ideal e configurar o DocumentRoot diretamente para a pasta
+# public/ e dispensar este arquivo.
+# ---------------------------------------------------------------------------
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Nao reescrever o que ja aponta para public/.
+    RewriteCond %{REQUEST_URI} !^/public/
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>
+
+# Protege arquivos sensiveis na raiz do projeto.
+<FilesMatch "(^\.env|\.env\..*|composer\.(json|lock)|.*\.sql|.*\.log|.*\.md)$">
+    Require all denied
+</FilesMatch>
+
+Options -Indexes
